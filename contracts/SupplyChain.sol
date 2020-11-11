@@ -80,10 +80,10 @@ contract SupplyChain {
    */
   
   
-  modifier forSale(uint _sku) {require( items[_sku].state == ForSale && items[_sku].seller != address(0), "Item is not for sale."); _;}
-  modifier sold(uint _sku) {require( items[_sku].state == Sold); _;}
-  modifier shipped(uint _sku) {require( items[_sku].state == Shipped); _;}
-  modifier received(uint _sku) {require( items[_sku].state == Received); _;}
+  modifier forSale(uint _sku) {require( items[_sku].state == State.ForSale && items[_sku].seller != address(0), "Item is not for sale."); _;}
+  modifier sold(uint _sku) {require( items[_sku].state == State.Sold); _;}
+  modifier shipped(uint _sku) {require( items[_sku].state == State.Shipped); _;}
+  modifier received(uint _sku) {require( items[_sku].state == State.Received); _;}
 
 
   constructor() public {
@@ -108,13 +108,13 @@ contract SupplyChain {
 
   function buyItem(uint _sku)
     public
-    payable
-    forSale(sku) 
+    payable                                                                                       
+    forSale(_sku) 
     paidEnough(items[_sku].price)
     checkValue(_sku) {  
       items[_sku].seller.transfer(msg.value);
       items[_sku].buyer = msg.sender;
-      item[_sku].state = State.Sold
+      items[_sku].state = State.Sold;
       emit LogSold(_sku);
   }
 
@@ -124,7 +124,7 @@ contract SupplyChain {
     public
     sold(_sku)
     verifyCaller(items[_sku].seller) {
-      item[_sku].state = State.Shipped
+      items[_sku].state = State.Shipped;
       emit LogShipped(_sku);
     }
 
@@ -134,7 +134,7 @@ contract SupplyChain {
     public
     sold(_sku)
     verifyCaller(items[_sku].buyer) {
-      item[_sku].state = State.Received
+      items[_sku].state = State.Received;
       emit LogReceived(_sku);
     }
 
