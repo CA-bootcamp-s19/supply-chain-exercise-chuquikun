@@ -38,9 +38,10 @@ contract SupplyChain {
   struct Item {
     string name;
     uint sku;
+    uint price;
     State state;
-    address seller;
-    address buyer;
+    address payable seller;
+    address payable buyer;
   }
    
 
@@ -55,7 +56,8 @@ contract SupplyChain {
   event LogReceived(uint indexed sku);
 
 /* Create a modifer that checks if the msg.sender is the owner of the contract */
-
+  
+  modifier isOwner() {require(msg.sender == owner); _;}
   modifier verifyCaller (address _address) { require (msg.sender == _address); _;}
 
   modifier paidEnough(uint _price) { require(msg.value >= _price); _;}
@@ -78,10 +80,10 @@ contract SupplyChain {
    */
   
   
-  /// modifier forSale
-  /// modifier sold
-  /// modifier shipped
-  /// modifier received
+  modifier forSale(uint _sku) {require( items[_sku].State == ForSale && items[_sku].seller != address(0)); _;}
+  modifier sold(uint _sku) {require( items[_sku].State == Sold; _;}
+  modifier shipped(uint _sku) {require( items[_sku].State == Shipped; _;}
+  modifier received(uint _sku) {require( items[_sku].State == Received; _;}
 
 
   constructor() public {
