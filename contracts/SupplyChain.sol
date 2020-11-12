@@ -12,7 +12,7 @@ contract SupplyChain {
   address public owner;
 
   /* Add a variable called skuCount to track the most recent sku # */
-  uint private skuCount;
+  uint public skuCount;
 
   /* Add a line that creates a public mapping that maps the SKU (a number) to an Item.
      Call this mappings items
@@ -92,10 +92,12 @@ contract SupplyChain {
        owner = msg.sender;
        skuCount = 0;
   }
-
-  fallback() external payable {
+  
+  /* 
+  fallback() external {
     revert();
   }
+  */
 
   function addItem(string memory _name, uint _price) public returns(bool){
     emit LogForSale(skuCount);
@@ -112,11 +114,12 @@ contract SupplyChain {
 
   function buyItem(uint _sku)
     public
-    payable                                                                                       
+    payable                                                                                     
     forSale(_sku) 
     paidEnough(items[_sku].price)
     checkValue(_sku) {  
-      items[_sku].seller.transfer(uint(msg.value));
+      uint _price =  items[_sku].price;
+      items[_sku].seller.transfer(_price);
       items[_sku].buyer = msg.sender;
       items[_sku].state = State.Sold;
       emit LogSold(_sku);
