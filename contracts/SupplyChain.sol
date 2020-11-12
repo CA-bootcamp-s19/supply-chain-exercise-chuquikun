@@ -9,10 +9,10 @@ pragma solidity >=0.6.0 <0.7.0;
 contract SupplyChain {
 
   /* set owner */
-  address owner;
+  address public owner;
 
   /* Add a variable called skuCount to track the most recent sku # */
-  uint skuCount;
+  uint private skuCount;
 
   /* Add a line that creates a public mapping that maps the SKU (a number) to an Item.
      Call this mappings items
@@ -93,6 +93,10 @@ contract SupplyChain {
        skuCount = 0;
   }
 
+  fallback() external payable {
+    revert();
+  }
+
   function addItem(string memory _name, uint _price) public returns(bool){
     emit LogForSale(skuCount);
     items[skuCount] = Item({name: _name, sku: skuCount, price: _price, state: State.ForSale, seller: msg.sender, buyer: address(0)});
@@ -112,7 +116,7 @@ contract SupplyChain {
     forSale(_sku) 
     paidEnough(items[_sku].price)
     checkValue(_sku) {  
-      items[_sku].seller.transfer(msg.value);
+      items[_sku].seller.transfer(uint(msg.value));
       items[_sku].buyer = msg.sender;
       items[_sku].state = State.Sold;
       emit LogSold(_sku);
@@ -139,7 +143,7 @@ contract SupplyChain {
     }
 
   /* We have these functions completed so we can run tests, just ignore it :) */
-  /*
+  
   function fetchItem(uint _sku) public view returns (string memory name, uint sku, uint price, uint state, address seller, address buyer) {
     name = items[_sku].name;
     sku = items[_sku].sku;
@@ -148,6 +152,6 @@ contract SupplyChain {
     seller = items[_sku].seller;
     buyer = items[_sku].buyer;
     return (name, sku, price, state, seller, buyer);
-  } */
+  } 
 
 }
