@@ -139,7 +139,7 @@ contract SupplyChain {
   is the buyer. Change the state of the item to received. Remember to call the event associated with this function!*/
   function receiveItem(uint _sku)
     public
-    sold(_sku)
+    shipped(_sku)
     verifyCaller(items[_sku].buyer) {
       items[_sku].state = State.Received;
       emit LogReceived(_sku);
